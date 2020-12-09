@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, SafeAreaView, ScrollView, Dimensions, View} from 'react-native';
+import {StyleSheet, SafeAreaView, ScrollView, Dimensions, View, RefreshControl} from 'react-native';
 import ActionButton from 'react-native-action-button';
 import axios from 'axios';
 
@@ -7,9 +7,22 @@ import StationCard from "../components/StationCard/StationCard";
 
 const {height} = Dimensions.get('window');
 
+const wait = (timeout) => {
+    return new Promise(resolve => {
+        setTimeout(resolve, timeout);
+    });
+};
+
 const Home = (props) => {
     const [stations, setStations] = useState([]);
     const [screenHeight, setScreenHeight] = useState(0);
+    const [refreshing, setRefreshing] = React.useState(false);
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+
+        wait(2000).then(() => setRefreshing(false));
+    }, []);
 
     const getStations = async () => {
         try {
@@ -45,6 +58,9 @@ const Home = (props) => {
                     contentContainerStyle={{flexGrow: 1}}
                     scrollEnabled={scrollEnabled}
                     onContentSizeChange={onContentSizeChange}
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
+                    }
                 >
                     <View style={styles.contentContainer}>
                         {stations.map(station =>

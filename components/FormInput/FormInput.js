@@ -1,30 +1,31 @@
-import React from 'react'
+import React, {useCallback} from 'react'
 import {StyleSheet, View, TextInput, Text, Dimensions} from 'react-native'
+
 import {BULLET} from "../../enviroments";
 
 const {width, height} = Dimensions.get('screen');
 
 const formInput = props => {
 
-    const capitalizeHandler = (str) => {
+    const capitalizeHandler = useCallback((str) => {
         return str.charAt(0).toUpperCase() + str.slice(1);
-    };
+    });
 
-    const hasLowerCase = (str) => {
+    const hasLowerCase = useCallback((str) => {
         return (/[a-z]/.test(str));
-    };
+    });
 
-    const hasUpperCase = (str) => {
+    const hasUpperCase = useCallback((str) => {
         return (/[A-Z]/.test(str));
-    };
+    });
 
-    const hasNumber = (str) => {
+    const hasNumber = useCallback((str) => {
         return (/[0-9]/.test(str));
-    };
+    });
 
-    const hasSpecialChar = (str) => {
+    const hasSpecialChar = useCallback((str) => {
         return (/[!@#\$%\^&\*]/.test(str));
-    };
+    });
 
     const checkbox = (values) => (
         <View>
@@ -46,26 +47,10 @@ const formInput = props => {
         </View>
     );
 
-    const defineTheme = () => {
-        if (props.theme === 'dark') {
-            return styles.inputBlack
-        } else {
-            return styles.input
-        }
-    };
-
-    const defineErrorTheme = () => {
-        if (props.theme === 'dark') {
-            return styles.onErrorInputBlack
-        } else {
-            return styles.onErrorInput
-        }
-    };
-
     return (
         <View>
             <View style={{marginTop: 10, marginBottom: 10}}>
-                <Text>
+                <Text style={{color: props.theme === 'dark' ? '#B3B6B7' : 'black'}}>
                     {capitalizeHandler(props.title)}
                 </Text>
                 <TextInput

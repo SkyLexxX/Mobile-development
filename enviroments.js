@@ -9,6 +9,8 @@ const MEASUREMENT_ID="G-D7BGEMX9QJ";
 
 const BULLET = `\u2022 `;
 
+const API = "http://weatherapp.eba-7cfnuwsm.eu-west-1.elasticbeanstalk.com/api/stations/";
+
 export {
     API_KEY,
     AUTH_DOMAIN,
@@ -18,5 +20,6 @@ export {
     MESSAGING_SENDER_ID,
     APP_ID,
     MEASUREMENT_ID,
+    API,
     BULLET
 }

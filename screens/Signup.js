@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useCallback} from 'react'
 import {StyleSheet, View, Alert, KeyboardAvoidingView,} from 'react-native'
 import {Formik} from "formik";
 import * as Yup from "yup";
@@ -27,7 +27,7 @@ const SignupTest = (props) => {
 
     });
 
-    const onSignup = (values) => {
+    const onSignup = useCallback((values) => {
         firebase
             .auth()
             .createUserWithEmailAndPassword(values.email, values.password)
@@ -65,9 +65,9 @@ const SignupTest = (props) => {
                     {cancelable: true}
                 )
             )
-    };
+    });
 
-    const goToLogin = () => props.navigation.navigate('Login');
+    const goToLogin = useCallback(() => props.navigation.navigate('Login'));
 
     return (
         <KeyboardAvoidingView

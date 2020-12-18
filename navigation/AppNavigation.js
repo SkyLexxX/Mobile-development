@@ -1,37 +1,32 @@
 import {createStackNavigator} from 'react-navigation-stack'
-import Home from '../screens/Home'
-import Cloud from '../screens/Cloud'
+
+import Cloud from '../screens/Home'
+import Settings from '../screens/Settings'
 import AddStation from '../screens/AddStation'
 
 const AppNavigation = createStackNavigator(
     {
-        Home: {
-            screen: Home,
-            navigationOptions: () => ({
-                title: `Home`,
-                headerStyle: {backgroundColor: "#4d2c91"},
-                headerTitleStyle: {color: "#FFFFFF"}
-            }),
-        },
         Cloud: {
             screen: Cloud,
             navigationOptions: () => ({
                 title: `Cloud`,
-                headerStyle: {backgroundColor: "#4d2c91"},
-                headerTitleStyle: {color: "#FFFFFF"}
+            }),
+        },
+        Settings: {
+            screen: Settings,
+            navigationOptions: () => ({
+                title: `Settings`,
             }),
         },
         AddStation: {
             screen: AddStation,
             navigationOptions: () => ({
                 title: `Add Station`,
-                headerStyle: {backgroundColor: "#4d2c91"},
-                headerTitleStyle: {color: "#FFFFFF"}
             }),
         }
     },
     {
-        initialRouteName: 'Home',
+        initialRouteName: 'Cloud',
         headerMode: 'float',
         mode: "modal",
     }

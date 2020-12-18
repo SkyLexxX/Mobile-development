@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useCallback} from 'react';
 import {Alert, StyleSheet, View, KeyboardAvoidingView} from 'react-native'
 import { Appearance } from 'react-native-appearance';
 import * as Yup from 'yup';
@@ -23,7 +23,7 @@ const LoginTest = (props) => {
 
     });
 
-    const submit = (values) => {
+    const submit = useCallback((values) => {
         firebase
             .auth()
             .signInWithEmailAndPassword(values.email, values.password)
@@ -42,9 +42,9 @@ const LoginTest = (props) => {
                     {cancelable: true}
                 );
             })
-    };
+    });
 
-    const goToSignup = () => props.navigation.navigate('Signup');
+    const goToSignup = useCallback(() => props.navigation.navigate('Signup'));
 
     return (
         <KeyboardAvoidingView
@@ -94,12 +94,6 @@ const LoginTest = (props) => {
 };
 
 const styles = StyleSheet.create({
-    // container: {
-    //     flex: 1,
-    //     backgroundColor: '#fff',
-    //     alignItems: 'center',
-    //     justifyContent: 'center'
-    // },
     container: {
         flex: 1,
         display: "flex",

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {StyleSheet, SafeAreaView, ScrollView, Keyboard, View, TouchableWithoutFeedback} from 'react-native';
 import {Formik} from "formik";
 import * as Yup from "yup";
@@ -6,10 +6,13 @@ import axios from 'axios';
 
 import FormInput from "../components/FormInput/FormInput";
 import FormButton from "../components/FormButton/FormButton";
-
+import firebase from "../api/firebase/firebase";
+import {DARK_NEUTRAL, DARK_PRIMARY, DARK_SECONDARY, HIGHLIGHT, LIGHT_PRIMARY, LIGHT_SECONDARY} from "../colors";
 
 
 const AddStation = (props) => {
+    const [uid, setUid] = useState(firebase.auth().currentUser.uid);
+    const [isEnabled, setIsEnabled] = useState(false);
 
     const shema = Yup.object({
         name: Yup.string().required('Name is required'),
@@ -25,7 +28,7 @@ const AddStation = (props) => {
         producer_id: Yup.string().required('Producer-id is required'),
     });
 
-    const submit = (values) => {
+    const submit = useCallback((values) => {
         axios.post(`http://weatherapp.eba-7cfnuwsm.eu-west-1.elasticbeanstalk.com/api/stations/`, {
             "station": {
                 name: values.name,
@@ -49,10 +52,29 @@ const AddStation = (props) => {
                 console.log(error);
                 alert(`Oops something went wrong,\n${error}`);
             });
-    };
+    });
+
+    useEffect(() => {
+        firebase
+            .firestore()
+            .collection('users')
+            .doc(uid)
+            .onSnapshot(function (doc) {
+                {
+                    doc.data() && doc.data().theme ? setIsEnabled(true) : setIsEnabled(false)
+                }
+                console.log("Current data: ", doc.data());
+            });
+    }, [uid]);
+
+    useEffect(() => {
+        props.navigation.setParams({
+            isDarkMode: isEnabled
+        });
+    }, [isEnabled]);
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={[styles.container, {backgroundColor: isEnabled ? DARK_SECONDARY : LIGHT_SECONDARY}]}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <SafeAreaView style={styles.safeAreaContainer}>
                     <ScrollView
@@ -90,6 +112,7 @@ const AddStation = (props) => {
                                             value={values.name}
                                             touched={touched.name}
                                             errors={errors.name}
+                                            theme={isEnabled && 'dark'}
                                         />
                                         <FormInput
                                             title={'description'}
@@ -99,6 +122,7 @@ const AddStation = (props) => {
                                             value={values.description}
                                             touched={touched.description}
                                             errors={errors.description}
+                                            theme={isEnabled && 'dark'}
                                         />
                                         <FormInput
                                             title={'temperature'}
@@ -108,6 +132,7 @@ const AddStation = (props) => {
                                             value={values.temperature}
                                             touched={touched.temperature}
                                             errors={errors.temperature}
+                                            theme={isEnabled && 'dark'}
                                         />
                                         <FormInput
                                             title={'humidity'}
@@ -117,6 +142,7 @@ const AddStation = (props) => {
                                             value={values.humidity}
                                             touched={touched.humidity}
                                             errors={errors.humidity}
+                                            theme={isEnabled && 'dark'}
                                         />
                                         <FormInput
                                             title={'windSpeed'}
@@ -126,6 +152,7 @@ const AddStation = (props) => {
                                             value={values.windSpeed}
                                             touched={touched.windSpeed}
                                             errors={errors.windSpeed}
+                                            theme={isEnabled && 'dark'}
                                         />
                                         <FormInput
                                             title={'direction'}
@@ -135,6 +162,7 @@ const AddStation = (props) => {
                                             value={values.direction}
                                             touched={touched.direction}
                                             errors={errors.direction}
+                                            theme={isEnabled && 'dark'}
                                         />
                                         <FormInput
                                             title={'pressure'}
@@ -144,6 +172,7 @@ const AddStation = (props) => {
                                             value={values.pressure}
                                             touched={touched.pressure}
                                             errors={errors.pressure}
+                                            theme={isEnabled && 'dark'}
                                         />
                                         <FormInput
                                             title={'location'}
@@ -153,6 +182,7 @@ const AddStation = (props) => {
                                             value={values.location}
                                             touched={touched.location}
                                             errors={errors.location}
+                                            theme={isEnabled && 'dark'}
                                         />
                                         <FormInput
                                             title={'Installation'}
@@ -162,6 +192,7 @@ const AddStation = (props) => {
                                             value={values.dateOfInstallation}
                                             touched={touched.dateOfInstallation}
                                             errors={errors.dateOfInstallation}
+                                            theme={isEnabled && 'dark'}
                                         />
                                         <FormInput
                                             title={'Service'}
@@ -171,6 +202,7 @@ const AddStation = (props) => {
                                             value={values.dateOfServiceWork}
                                             touched={touched.dateOfServiceWork}
                                             errors={errors.dateOfServiceWork}
+                                            theme={isEnabled && 'dark'}
                                         />
                                         <FormInput
                                             title={'producer-id'}
@@ -180,6 +212,7 @@ const AddStation = (props) => {
                                             value={values.producer_id}
                                             touched={touched.producer_id}
                                             errors={errors.producer_id}
+                                            theme={isEnabled && 'dark'}
                                         />
                                         <View style={styles.buttonContainer}>
                                             <FormButton
@@ -194,16 +227,28 @@ const AddStation = (props) => {
                     </ScrollView>
                 </SafeAreaView>
             </TouchableWithoutFeedback>
-        </View>
+        </SafeAreaView>
     );
+};
+
+AddStation['navigationOptions'] = (props) => {
+    const params = props.navigation.state.params || {};
+
+    return {
+        headerTintColor: params.isDarkMode ? DARK_NEUTRAL : HIGHLIGHT,
+        headerTitleStyle: {color: params.isDarkMode ? DARK_NEUTRAL : HIGHLIGHT},
+        headerStyle: {
+            backgroundColor: params.isDarkMode ? DARK_PRIMARY : LIGHT_PRIMARY,
+            elevation: 0,
+            shadowOpacity: 0,
+            borderBottomWidth: 0,
+        }
+    };
 };
 
 const styles = StyleSheet.create({
     container: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        height: '100%'
+        flex: 1,
     },
     safeAreaContainer: {
         flex: 1,
